@@ -49,11 +49,10 @@
           const d = saved === "dark";
           setIsDark(d);
           document.documentElement.classList.toggle("dark", d);
-          return;
+        } else {
+          setIsDark(false);
+          document.documentElement.classList.remove("dark");
         }
-        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-        setIsDark(prefersDark);
-        document.documentElement.classList.toggle("dark", prefersDark);
       }, []);
       const toggle = () => {
         setIsDark(d => {
