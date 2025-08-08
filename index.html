@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rahul × Aishwarya — Wedding</title>
+  <meta name="description" content="Rahul × Aishwarya — 23 Nov 2025 — You're invited!" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {}
+      }
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+
+<body class="bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100">
+  <div id="root"></div>
+
+  <!-- React 18 UMD -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <!-- Babel for in-browser JSX (so you can host on GitHub Pages with no build) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useEffect, useMemo, useState } = React;
+
+    // Dark mode toggle (remembers choice)
+    const useDarkMode = () => {
+      const [isDark, setIsDark] = useState(false);
+      useEffect(() => {
+        const saved = localStorage.getItem("wedding.theme");
+        if (saved) {
+          const d = saved === "dark";
+          setIsDark(d);
+          document.documentElement.classList.toggle("dark", d);
+          return;
+        }
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setIsDark(prefersDark);
+        document.documentElement.classList.toggle("dark", prefersDark);
+      }, []);
+      const toggle = () => {
+        setIsDark(d => {
+          const next = !d;
+          localStorage.setItem("wedding.theme", next ? "dark" : "light");
+          document.documentElement.classList.toggle("dark", next);
+          return next;
+        });
+      };
+      return { isDark, toggle };
+    };
+
+    const Countdown = ({ targetISO }) => {
+      const target = useMemo(() => new Date(targetISO).getTime(), [targetISO]);
+      const [now, setNow] = useState(Date.now());
+      useEffect(() => { const id = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(id); }, []);
+      const distance = Math.max(0, target - now);
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+      const items = [
+        { label: "Days", value: days },
+        { label: "Hours", value: hours },
+        { label: "Mins", value: minutes },
+        { label: "Secs", value: seconds },
+      ];
+      return (
+        <div className="grid grid-flow-col auto-cols-max gap-6 text-center">
+          {items.map(it => (
+            <div key={it.label}>
+              <div className="text-3xl md:text-5xl font-bold">{String(it.value).padStart(2, "0")}</div>
+              <div className="text-xs opacity-70">{it.label}</div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+    // Pretty event card with image
+    const EventCard = ({ name, time, venue, address, mapUrl, image }) => (
+      <div className="overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white/60 dark:bg-neutral-950/60 shadow-[0_6px_30px_rgba(0,0,0,.05)]">
+        {/* Image */}
+        <div className="aspect-[16/9] w-full overflow-hidden">
+          <img
+            src={image || "images/event-placeholder.jpg"}
+            alt={name}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+
+        {/* Body */}
+        <div className="p-5 md:p-6 text-center">
+          <h3 className="text-xl font-semibold tracking-tight">{name}</h3>
+          <div className="mt-2 flex items-center justify-center gap-4 text-sm opacity-80">
+            <span className="inline-flex items-center gap-1"><span>📅</span>{time || "TBA"}</span>
+            <span className="inline-flex items-center gap-1"><span>📍</span>{venue}</span>
+          </div>
+          <p className="mt-3 text-sm opacity-80 leading-relaxed">{address}</p>
+
+          <div className="mt-5">
+            <a
+              href={mapUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900 underline underline-offset-4"
+            >
+              {/* inline map-pin icon so it always loads */}
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="opacity-90">
+                <path fill="currentColor" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6Zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
+              </svg>
+              Open in Maps
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+
+    // Group by date with a nice date header
+    const EventDay = ({ dateLabel, items }) => (
+      <div className="mb-10 last:mb-0">
+        <div className="sticky top-20 z-10 mb-5 flex items-center justify-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-neutral-200 dark:border-neutral-800 bg-white/60 dark:bg-neutral-950/60 px-4 py-2 text-sm font-medium shadow-sm backdrop-blur">
+            <span>🗓️</span>
+            <span>{dateLabel}</span>
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6">
+          {items.map((ev, i) => (
+            <EventCard key={i} {...ev} />
+          ))}
+        </div>
+      </div>
+    );
+
+    const TravelCard = ({
+      icon,
+      title,
+      locationName,
+      mapsUrl,
+      codeLabel,
+      code,
+      note,
+      extra,
+      distance,
+      links = [],
+    }) => (
+      <div className="h-full rounded-3xl border border-neutral-200 dark:border-neutral-800 p-6 md:p-8 text-left shadow-[0_6px_30px_rgba(0,0,0,.05)] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="text-lg md:text-xl">{icon}</div>
+          <h3 className="text-xl md:text-2xl font-semibold tracking-tight">{title}</h3>
+        </div>
+
+        {/* Location + actions */}
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <p className="text-[15px] leading-relaxed font-medium mr-2">{locationName}</p>
+
+          <a
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 dark:border-neutral-800 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900"
+          >
+            {/* inline map-pin so it always loads */}
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="opacity-90">
+              <path fill="currentColor" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6Zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
+            </svg>
+            Open in Google Maps
+          </a>
+
+          {code && (
+            <div className="inline-flex items-center gap-2 rounded-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 px-3 py-1 text-sm">
+              <span className="opacity-70">{codeLabel}</span>
+              <span className="font-medium">{code}</span>
+            </div>
+          )}
+        </div>
+
+        {note && (
+          <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-4 text-sm italic opacity-90">
+            {note}
+          </div>
+        )}
+
+        {extra && <p className="mt-3 text-sm opacity-90">{extra}</p>}
+
+        {/* Push divider to bottom so both cards align */}
+        <div className="mt-auto"></div>
+
+        <div className="pt-6 mt-6 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+          {distance && <div className="text-sm opacity-80 mb-3">{distance}</div>}
+          <div className="grid sm:grid-cols-2 gap-2">
+            {links.map((l, i) => (
+              <a
+                key={i}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900 underline underline-offset-4"
+              >
+                {l.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+
+
+    // Centered section (except hero) + centered header row
+    const Section = ({ id, title, children, icon }) => (
+      <section id={id} className="max-w-5xl mx-auto px-4 py-16 text-center">
+        <div className="flex items-center justify-center gap-3 mb-6">
+          {icon ? <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs">{icon}</span> : null}
+          <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{title}</h2>
+        </div>
+        <div className="max-w-none space-y-4">{children}</div>
+      </section>
+    );
+
+    const Nav = ({ isDark, toggle }) => (
+      <header className="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-neutral-900/70 border-b border-neutral-200 dark:border-neutral-800">
+        <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
+          <a href="#top" className="font-semibold tracking-tight">Rahul × Aishwarya</a>
+          <nav className="hidden md:flex items-center gap-6 text-sm">
+            <a href="#story" className="hover:opacity-80">Story</a>
+            <a href="#events" className="hover:opacity-80">Events</a>
+            <a href="#venue" className="hover:opacity-80">Venue</a>
+            <a href="#travel" className="hover:opacity-80">Travel</a>
+            <a href="#faq" className="hover:opacity-80">FAQ</a>
+            <a href="#rsvp" className="hover:opacity-80 font-semibold">RSVP</a>
+          </nav>
+          <button onClick={toggle} aria-label="Toggle theme" className="p-2 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:shadow-sm">
+            <span className="inline-block w-5 h-5">{isDark ? "☀️" : "🌙"}</span>
+          </button>
+        </div>
+      </header>
+    );
+
+    const App = () => {
+      const { isDark, toggle } = useDarkMode();
+
+      // Content UPDATED with Venue + Via Train / Via Flight
+      const content = {
+        couple: {
+          groom: {
+            name: "Rahul",
+            short: "Berlin-based DevOps engineer, hamesha coffee aur code ready. Gym sessions, rock playlists & street-food hunts se life ko full charge rakhta hai. Ab terminal band karke, sherwani pehen kar, apni best friend ko “forever” bolne ko taiyaar."
+          },
+          bride: {
+            name: "Aishwarya",
+            short: "IT Admin by day, creative soul by night. Spicy food lover aur Rahul ki sabse badi cheerleader. IT tickets se break lekar, lehenga mein apni love story ko next level pe le jaane ko excited."
+          }
+        },
+        wedding: {
+          dateISO: "2025-11-22T10:30:00+05:30",
+          city: "Durg (Chhattisgarh)",
+          venue: "Hotel Anjani Palace"
+        },
+        story: {
+          tagline: "From a friendly hello to forever.",
+          paragraphs: [
+            "Pehela “Hi” se lekar aaj tak, hamari journey full hai love, laughter aur hazaaron yaadein.",
+            "Ab 23 November 2025 ko hum 7 pheron ke saath apna forever shuru karne jaa rahe hain. Aapki presence se yeh shaadi aur bhi khaas banegi—zaroor aaiyega!"
+          ]
+        },
+        // Events now point to the venue
+        events: [
+          {
+            name: "Haldi",
+            dateLabel: "Sat, 21 Nov 2025",
+            time: "TBA",
+            venue: "Hotel Anjani Palace",
+            address: "",
+            mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
+            image: "images/events/haldi.jpeg"
+          },
+          {
+            name: "Mehendi",
+            dateLabel: "Sat, 22 Nov 2025",
+            time: "TBA",
+            venue: "Hotel Anjani Palace",
+            address: "",
+            mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
+            image: "images/events/mehendi.jpg"
+          },
+          {
+            name: "Sangeet & Engagement",
+            dateLabel: "Sat, 22 Nov 2025",
+            time: "TBA",
+            venue: "Hotel Anjani Palace",
+            address: "",
+            mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
+            image: "images/events/ring.jpeg"
+          },
+          {
+            name: "Wedding Ceremony (Pheras)",
+            dateLabel: "Sun, 23 Nov 2025",
+            time: "10:30 AM",
+            venue: "Hotel Anjani Palace",
+            address: "",
+            mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
+            image: "images/events/marriage.jpeg"
+          },
+          {
+            name: "Reception",
+            dateLabel: "Sun, 23 Nov 2025",
+            time: "7:00 PM",
+            venue: "Hotel Anjani Palace",
+            address: "",
+            mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
+            image: "images/events/reception.jpeg"
+          }
+        ],
+
+        venue: {
+          name: "Hotel Anjani Palace",
+          website: "https://hotelanjanipalace.com/",
+          addressLabel: "📍 Hotel Anjani Palace · NH6, opposite Toyota Showroom, Kadambari Nagar, Katulbod, Durg, Chhattisgarh 491001, India",
+          addressMap: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
+          image: "images/venue.jpg" // optional; add your image file or remove this line
+        },
+        travel: {
+          viaTrain: {
+            heading: "Via Train 🚆",
+            blocks: [
+              "Arrival Station — Durg Junction railway station ([Open in Maps](https://maps.app.goo.gl/iL7FAr8oBEsv4N9W8))",
+              "Station code — DURG",
+            ],
+            note: "Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival.",
+            extra: "✨ Transport will be provided by us. Regular cars will be running.",
+            cab: {
+              distance: "🚗 2.2 km (≈10 min) via road",
+              links: [
+                { label: "Durg Junction → Hotel Anjani Palace", href: "https://maps.app.goo.gl/Rac6QoSoCVnZig8w8" },
+                { label: "Hotel Anjani Palace → Durg Junction", href: "https://maps.app.goo.gl/ud3x5H5PN9krwiwz7" }
+              ]
+            }
+          },
+          viaFlight: {
+            heading: "Via Flight ✈️",
+            blocks: [
+              "Arrival Airport — Swami Vivekananda Airport, Raipur ([Open in Maps](https://maps.app.goo.gl/KTC11qem4Gx7DDBQ9))",
+              "Airport code — RPR",
+            ],
+            note: "Please inform us of your arrival time beforehand so we can arrange a van if multiple people are traveling (Raipur → Durg ≈ 1 hr 30 min).",
+            cab: {
+              distance: "🚗 53 km (≈1 hr 30 min) via road",
+              links: [
+                { label: "Airport → Hotel Anjani Palace", href: "https://maps.app.goo.gl/YUsKYjkYTezxfBmF8" },
+                { label: "Hotel Anjani Palace → Airport", href: "https://maps.app.goo.gl/AwEJbRvatsebptoRA" }
+              ]
+            }
+          },
+          tips: [
+            "Local travel (Durg): Rapido cab services.",
+            "From Raipur → Durg/Bhilai: Ola, Uber, Rapido are available."
+          ]
+        },
+        faq: [
+          { q: "How to travel locally?", a: "Use Rapido (Durg) for cab services." },
+          { q: "How to travel from Raipur to Durg/Bhilai?", a: "Book a cab via Ola, Uber, or Rapido." },
+          { q: "Dress code?", a: "Traditional Indian or semi-formal — come comfy and ready to dance!" }
+        ],
+        socials: {
+          phone: "tel:+491234567890",
+          email: "mailto:hello@example.com",
+          instagram: "#"
+        },
+        rsvp: {
+          link: "https://tally.so/r/wojpvP"
+        }
+      };
+
+      const { couple, wedding, story, events, venue, travel, faq, socials, rsvp } = content;
+
+      return (
+        <div id="top" className="min-h-screen">
+          <Nav isDark={isDark} toggle={toggle} />
+
+          {/* Hero (left aligned layout stays) */}
+          <section className="relative overflow-hidden">
+            <div className="max-w-6xl mx-auto px-4 pt-14 pb-24 md:pt-24 md:pb-28">
+              <div className="grid md:grid-cols-2 gap-10 items-center">
+                <div>
+                  <div className="text-sm uppercase tracking-widest opacity-70 mb-2 flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs">♥</span>
+                    We’re getting married
+                  </div>
+                  <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+                    {couple.groom.name} <span className="opacity-70">×</span> {couple.bride.name}
+                  </h1>
+                  <p className="mt-4 text-lg md:text-xl opacity-80">
+                    Join us as we say “I do” on <strong>23 November 2025</strong>.
+                  </p>
+                  <div className="mt-8">
+                    <Countdown targetISO={wedding.dateISO} />
+                  </div>
+                  <div className="mt-8 flex flex-wrap gap-3 text-sm">
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-lg border border-neutral-200 dark:border-neutral-800">
+                      <span>📅</span> 23 Nov 2025
+                    </span>
+                    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-lg border border-neutral-200 dark:border-neutral-800">
+                      <span>📍</span> {wedding.city} {wedding.venue && "• " + wedding.venue}
+                    </span>
+                  </div>
+                  <div className="mt-10 flex gap-3">
+                    <a href="#rsvp" className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 hover:opacity-90">
+                      <span>✉️</span> RSVP Now
+                    </a>
+                    <a href="#events" className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900">
+                      <span>🗓️</span> View Events
+                    </a>
+                  </div>
+                </div>
+                <div>
+                  <div className="aspect-square md:aspect-[4/5] rounded-3xl overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-[0_10px_40px_rgba(0,0,0,0.08)]">
+                    {/* Replace with your photo */}
+                    <img src="images/hero-photo.png" alt="Rahul and Aishwarya" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <Section id="couple" title="The Couple" icon="👥">
+            <div className="grid md:grid-cols-2 gap-6 text-left md:text-center">
+              <div className="rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800">
+                <h3 className="text-xl font-semibold">{couple.groom.name}</h3>
+                <p className="opacity-80 mt-1">{couple.groom.short}</p>
+              </div>
+              <div className="rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800">
+                <h3 className="text-xl font-semibold">{couple.bride.name}</h3>
+                <p className="opacity-80 mt-1">{couple.bride.short}</p>
+              </div>
+            </div>
+          </Section>
+
+          <Section id="story" title="Our Story" icon="❤️">
+            <p className="text-lg opacity-90">{story.tagline}</p>
+            {(story.paragraphs || []).map((p, i) => (
+              <p key={i} className="opacity-80 leading-relaxed">{p}</p>
+            ))}
+          </Section>
+
+          <Section id="events" title="Events & Schedule" icon="⏰">
+            {(() => {
+              // group by dateLabel
+              const byDate = {};
+              (events || []).forEach(ev => {
+                const key = ev.dateLabel || "TBA";
+                if (!byDate[key]) byDate[key] = [];
+                byDate[key].push(ev);
+              });
+
+              // keep stable order by original appearance
+              const orderedGroups = Object.keys(byDate).map(date => ({
+                date,
+                items: byDate[date]
+              }));
+
+              return (
+                <div className="space-y-10">
+                  {orderedGroups.map((g, idx) => (
+                    <EventDay key={idx} dateLabel={g.date} items={g.items} />
+                  ))}
+                </div>
+              );
+            })()}
+          </Section>
+
+
+          <Section id="venue" title="Venue" icon="📍">
+            <div className="rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800">
+              <h3 className="text-xl font-semibold mb-2">{venue.name}</h3>
+              <p className="opacity-80 mb-3">
+                <a href={venue.website} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Website</a>
+              </p>
+              <p className="opacity-90 mb-3"><strong>Address (Click for directions) →</strong></p>
+              <p className="opacity-80">
+                <a href={venue.addressMap} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{venue.addressLabel}</a>
+              </p>
+              {/* Optional venue image */}
+              {/* <img src={venue.image} alt="Venue" className="mt-6 w-full rounded-xl border border-neutral-200 dark:border-neutral-800" /> */}
+            </div>
+          </Section>
+
+          <Section id="travel" title="Travel & Stay" icon="🧭">
+            <div className="grid md:grid-cols-2 gap-6 items-stretch">
+              <TravelCard
+                icon={<span role="img" aria-label="train">🚆</span>}
+                title="Via Train"
+                locationName="Arrival Station — Durg Junction railway station"
+                mapsUrl="https://maps.app.goo.gl/iL7FAr8oBEsv4N9W8"
+                codeLabel="Station code"
+                code="DURG"
+                note="Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival."
+                extra="✨ Transport will be provided by us. Regular cars will be running."
+                distance="🚗 2.2 km (≈10 min) via road"
+                links={[
+                  { label: "Durg Junction → Hotel Anjani Palace", href: "https://maps.app.goo.gl/Rac6QoSoCVnZig8w8" },
+                  { label: "Hotel Anjani Palace → Durg Junction", href: "https://maps.app.goo.gl/ud3x5H5PN9krwiwz7" },
+                ]}
+              />
+
+              <TravelCard
+                icon={<span role="img" aria-label="flight">✈️</span>}
+                title="Via Flight"
+                locationName="Arrival Airport — Swami Vivekananda Airport, Raipur"
+                mapsUrl="https://maps.app.goo.gl/KTC11qem4Gx7DDBQ9"
+                codeLabel="Airport code"
+                code="RPR"
+                note="Please inform us of your arrival time beforehand so we can arrange a van if multiple people are traveling (Raipur → Durg ≈ 1 hr 30 min)."
+                distance="🚗 53 km (≈1 hr 30 min) via road"
+                links={[
+                  { label: "Airport → Hotel Anjani Palace", href: "https://maps.app.goo.gl/YUsKYjkYTezxfBmF8" },
+                  { label: "Hotel Anjani Palace → Airport", href: "https://maps.app.goo.gl/AwEJbRvatsebptoRA" },
+                ]}
+              />
+            </div>
+          </Section>
+
+
+          <Section id="rsvp" title="RSVP" icon="✉️">
+            <p className="text-lg opacity-80 mb-6">We’d love to know if you’re joining us! Please RSVP using the button below.</p>
+            <a
+              href={content.rsvp.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-6 py-3 bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 rounded-xl text-sm font-medium hover:opacity-90"
+            >
+              Fill RSVP Form
+            </a>
+          </Section>
+          <Section id="faq" title="FAQ" icon="❓">
+            <div className="space-y-3">
+              {(faq || []).map((item, i) => (
+                <details key={i} className="rounded-2xl p-5 border border-neutral-200 dark:border-neutral-800 text-left md:text-center">
+                  <summary className="cursor-pointer font-medium">{item.q}</summary>
+                  <p className="mt-3 opacity-80">{item.a}</p>
+                </details>
+              ))}
+            </div>
+          </Section>
+
+          <footer className="border-t border-neutral-200 dark:border-neutral-800">
+            <div className="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-3 gap-6 text-sm">
+              <div>
+                <div className="font-semibold">Rahul × Aishwarya</div>
+                <div className="opacity-70">23 Nov 2025</div>
+              </div>
+              <div className="space-y-2">
+                <a href={content.socials.phone} className="flex items-center gap-2 hover:opacity-80">📞 +49 123 456 7890</a>
+                <a href={content.socials.email} className="flex items-center gap-2 hover:opacity-80">✉️ hello@example.com</a>
+                <a href={content.socials.instagram} className="flex items-center gap-2 hover:opacity-80">📸 Instagram</a>
+              </div>
+              <div className="opacity-60">Built with ♥ — dark & light ready. Deploy on GitHub Pages.</div>
+            </div>
+          </footer>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+
+</html>
