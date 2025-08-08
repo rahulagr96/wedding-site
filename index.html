@@ -119,10 +119,7 @@
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900 underline underline-offset-4"
             >
-              {/* inline map-pin icon so it always loads */}
-              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="opacity-90">
-                <path fill="currentColor" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6Zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
-              </svg>
+              <img src="images/google_maps.svg" width="16" height="16" alt="Description" />
               Open in Maps
             </a>
           </div>
@@ -176,10 +173,7 @@
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg border border-neutral-200 dark:border-neutral-800 px-3 py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900"
           >
-            {/* inline map-pin so it always loads */}
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" className="opacity-90">
-              <path fill="currentColor" d="M12 2C8.686 2 6 4.686 6 8c0 4.5 6 12 6 12s6-7.5 6-12c0-3.314-2.686-6-6-6Zm0 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
-            </svg>
+            <img src="images/google_maps.svg" width="16" height="16" alt="Description" />
             Open in Google Maps
           </a>
 
@@ -236,7 +230,7 @@
     const Nav = ({ isDark, toggle }) => (
       <header className="sticky top-0 z-50 backdrop-blur bg-white/70 dark:bg-neutral-900/70 border-b border-neutral-200 dark:border-neutral-800">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-          <a href="#top" className="font-semibold tracking-tight">Rahul × Aishwarya</a>
+          <a href="#top" className="font-semibold tracking-tight">Rahul Weds Aishwarya</a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#story" className="hover:opacity-80">Story</a>
             <a href="#events" className="hover:opacity-80">Events</a>
@@ -403,7 +397,7 @@
                     We’re getting married
                   </div>
                   <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                    {couple.groom.name} <span className="opacity-70">×</span> {couple.bride.name}
+                    {couple.groom.name} <span className="opacity-70">Weds</span> {couple.bride.name}
                   </h1>
                   <p className="mt-4 text-lg md:text-xl opacity-80">
                     Join us as we say “I do” on <strong>23 November 2025</strong>.
