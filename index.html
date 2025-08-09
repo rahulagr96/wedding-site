@@ -238,8 +238,13 @@
     const Section = ({ id, title, children, icon }) => (
       <section id={id} className="max-w-5xl mx-auto px-4 py-16 text-center">
         <div className="flex items-center justify-center gap-3 mb-6">
-          {icon ? <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs">{icon}</span> : null}
+          {icon ? (
+            <span aria-hidden="true" className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs">{icon}</span>
+          ) : null}
           <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{title}</h2>
+          {icon ? (
+            <span aria-hidden="true" className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-neutral-300 dark:border-neutral-700 text-xs">{icon}</span>
+          ) : null}
         </div>
         <div className="max-w-none space-y-4">{children}</div>
       </section>
@@ -573,9 +578,14 @@
             <p className="text-lg opacity-80 mb-6">We’d love to know if you’re joining us! Please RSVP using the button below.</p>
 
             <iframe data-tally-src="https://tally.so/embed/wojpvP?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="2035" frameborder="0" marginheight="0" marginwidth="0" title="📩 RSVP 📩"></iframe>
-
-
           </Section>
+
+          <Section id="end" title="आप सभी का हार्दिक आमंत्रण" icon="🙏">
+            <p className="text-lg opacity-90">हमारे विवाह के शुभ अवसर पर सपरिवार पधारें, प्रेम व आशीर्वाद दें, और हमारे साथ हँसी-खुशी से यह ख़ास दिन यादगार बनाएँ।</p>
+            <p className="text-lg opacity-90">आपकी उपस्थिति हमारे लिए अनमोल है!</p>
+            <p className="text-lg opacity-90">आपका इंतज़ार रहेगा। 💖</p>
+          </Section>
+
           <Section id="faq" title="FAQ" icon="❓">
             <div className="space-y-3">
               {(faq || []).map((item, i) => (
