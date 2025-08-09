@@ -4,8 +4,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Rahul × Aishwarya — Wedding</title>
-  <meta name="description" content="Rahul × Aishwarya — 23 Nov 2025 — You're invited!" />
+  <title>Rahul Weds Aishwarya — Wedding</title>
+  <meta name="description" content="Rahul Weds Aishwarya — 23 Nov 2025 — You're invited!" />
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -113,17 +113,32 @@
           </div>
           <p className="mt-3 text-sm opacity-80 leading-relaxed">{address}</p>
 
-          <div className="mt-5">
-            <a
-              href={mapUrl || "#"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900 underline underline-offset-4"
-            >
-              <img src="images/google_maps.svg" width="16" height="16" alt="Description" />
-              Open in Maps
-            </a>
-          </div>
+          {/* hide this if event is Mehendi */}
+          {name !== "Mehendi" && (
+            <div className="mt-5">
+              <a
+                href={mapUrl || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900 underline underline-offset-4"
+              >
+                <img src="images/google_maps.svg" width="16" height="16" alt="Description" />
+                Open in Maps
+              </a>
+            </div>
+          )}
+          {name == "Mehendi" && (
+            <div className="mt-5">
+              <a
+                href={mapUrl || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 dark:border-neutral-800 px-4 py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-900 underline-offset-4"
+              >
+                Location will be shared on WhatsApp
+              </a>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -198,7 +213,9 @@
         <div className="mt-auto"></div>
 
         <div className="pt-6 mt-6 border-t border-dashed border-neutral-200 dark:border-neutral-800">
+          <h4 className="text-l md:text-2xl font-semibold tracking-tight">Distance:</h4>
           {distance && <div className="text-sm opacity-80 mb-3">{distance}</div>}
+
           <div className="grid sm:grid-cols-2 gap-2">
             {links.map((l, i) => (
               <a
@@ -347,7 +364,7 @@
           website: "https://hotelanjanipalace.com/",
           addressLabel: "📍 Hotel Anjani Palace · NH6, opposite Toyota Showroom, Kadambari Nagar, Katulbod, Durg, Chhattisgarh 491001, India",
           addressMap: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
-          image: "images/venue.jpg" // optional; add your image file or remove this line
+          image: "images/venue.png" // optional; add your image file or remove this line
         },
         travel: {
           viaTrain: {
@@ -356,7 +373,7 @@
               "Arrival Station — Durg Junction railway station ([Open in Maps](https://maps.app.goo.gl/iL7FAr8oBEsv4N9W8))",
               "Station code — DURG",
             ],
-            note: "Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival.",
+            note: "Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival.\n ",
             extra: "✨ Transport will be provided by us. Regular cars will be running.",
             cab: {
               distance: "🚗 2.2 km (≈10 min) via road",
@@ -387,9 +404,9 @@
           ]
         },
         faq: [
-          { q: "How to travel locally?", a: "Use Rapido (Durg) for cab services." },
+          { q: "How to travel locally (Durg/Bhilai)?", a: "Use Rapido for cab services." },
           { q: "How to travel from Raipur to Durg/Bhilai?", a: "Book a cab via Ola, Uber, or Rapido." },
-          { q: "Dress code?", a: "Traditional Indian or semi-formal — come comfy and ready to dance!" }
+          { q: "How to contact?", a: "Fill the RSVP form and we will reach out via WhatsApp." }
         ],
         socials: {
           phone: "tel:+491234567890",
@@ -452,6 +469,13 @@
             </div>
           </section>
 
+          <Section id="story" title="Our Story" icon="❤️">
+            <p className="text-lg opacity-90">{story.tagline}</p>
+            {(story.paragraphs || []).map((p, i) => (
+              <p key={i} className="opacity-80 leading-relaxed">{p}</p>
+            ))}
+          </Section>
+
           <Section id="couple" title="The Couple" icon="👥">
             <div className="grid md:grid-cols-2 gap-6 text-left md:text-center">
               <div className="rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800">
@@ -465,12 +489,7 @@
             </div>
           </Section>
 
-          <Section id="story" title="Our Story" icon="❤️">
-            <p className="text-lg opacity-90">{story.tagline}</p>
-            {(story.paragraphs || []).map((p, i) => (
-              <p key={i} className="opacity-80 leading-relaxed">{p}</p>
-            ))}
-          </Section>
+
 
           <Section id="events" title="Events & Schedule" icon="⏰">
             {(() => {
@@ -502,15 +521,15 @@
           <Section id="venue" title="Venue" icon="📍">
             <div className="rounded-2xl p-6 border border-neutral-200 dark:border-neutral-800">
               <h3 className="text-xl font-semibold mb-2">{venue.name}</h3>
-              <p className="opacity-80 mb-3">
+              {/*<p className="opacity-80 mb-3">
                 <a href={venue.website} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Website</a>
-              </p>
+              </p>*/}
               <p className="opacity-90 mb-3"><strong>Address (Click for directions) →</strong></p>
               <p className="opacity-80">
                 <a href={venue.addressMap} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">{venue.addressLabel}</a>
               </p>
               {/* Optional venue image */}
-              {/* <img src={venue.image} alt="Venue" className="mt-6 w-full rounded-xl border border-neutral-200 dark:border-neutral-800" /> */}
+              <img src={venue.image} alt="Venue" className="mt-6 w-full rounded-xl border border-neutral-200 dark:border-neutral-800" />
             </div>
           </Section>
 
@@ -555,7 +574,7 @@
 
             <iframe data-tally-src="https://tally.so/embed/wojpvP?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="2035" frameborder="0" marginheight="0" marginwidth="0" title="📩 RSVP 📩"></iframe>
 
-            
+
           </Section>
           <Section id="faq" title="FAQ" icon="❓">
             <div className="space-y-3">
@@ -571,11 +590,11 @@
           <footer className="border-t border-neutral-200 dark:border-neutral-800">
             <div className="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-3 gap-6 text-sm">
               <div>
-                <div className="font-semibold">Rahul × Aishwarya</div>
+                <div className="font-semibold">Rahul Weds Aishwarya</div>
                 <div className="opacity-70">23 Nov 2025</div>
               </div>
 
-              <div className="opacity-60">Built with ♥. Deploy on GitHub Pages.</div>
+              <div className="opacity-60">Built with ♥. Deployed on GitHub Pages.</div>
             </div>
           </footer>
         </div>
