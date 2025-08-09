@@ -202,12 +202,13 @@
         </div>
 
         {note && (
-          <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-4 text-sm italic opacity-90">
+          <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 p-4 text-sm opacity-90">
             {note}
+             {extra && <p className="mt-3 text-sm opacity-90">{extra}</p>}
           </div>
         )}
 
-        {extra && <p className="mt-3 text-sm opacity-90">{extra}</p>}
+       
 
         {/* Push divider to bottom so both cards align */}
         <div className="mt-auto"></div>
@@ -375,10 +376,10 @@
           viaTrain: {
             heading: "Via Train 🚆",
             blocks: [
-              "Arrival Station — Durg Junction railway station ([Open in Maps](https://maps.app.goo.gl/iL7FAr8oBEsv4N9W8))",
+              "Arrival Station — Durg Junction Railway Station ([Open in Maps](https://maps.app.goo.gl/iL7FAr8oBEsv4N9W8))",
               "Station code — DURG",
             ],
-            note: "Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival.\n ",
+            note: "→ Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival.\n ",
             extra: "✨ Transport will be provided by us. Regular cars will be running.",
             cab: {
               distance: "🚗 2.2 km (≈10 min) via road",
@@ -543,11 +544,11 @@
               <TravelCard
                 icon={<span role="img" aria-label="train">🚆</span>}
                 title="Via Train"
-                locationName="Arrival Station — Durg Junction railway station"
+                locationName="Arrival Station — Durg Junction Railway Station, Durg"
                 mapsUrl="https://maps.app.goo.gl/iL7FAr8oBEsv4N9W8"
                 codeLabel="Station code"
                 code="DURG"
-                note="Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival."
+                note="→ Please let us know your arrival details beforehand so we can arrange a pickup for you on arrival."
                 extra="✨ Transport will be provided by us. Regular cars will be running."
                 distance="🚗 2.2 km (≈10 min) via road"
                 links={[
@@ -563,7 +564,7 @@
                 mapsUrl="https://maps.app.goo.gl/KTC11qem4Gx7DDBQ9"
                 codeLabel="Airport code"
                 code="RPR"
-                note="Please inform us of your arrival time beforehand so we can arrange a van if multiple people are traveling (Raipur → Durg ≈ 1 hr 30 min)."
+                note="→ Please inform us of your arrival time beforehand so we can arrange a van if multiple people are traveling (Raipur → Durg ≈ 1 hr 30 min)."
                 distance="🚗 53 km (≈1 hr 30 min) via road"
                 links={[
                   { label: "Airport → Hotel Anjani Palace", href: "https://maps.app.goo.gl/YUsKYjkYTezxfBmF8" },
