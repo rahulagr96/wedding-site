@@ -92,7 +92,7 @@
       );
     };
     // Pretty event card with image
-    const EventCard = ({ name, time, venue, address, mapUrl, image }) => (
+    const EventCard = ({ name, time, venue, address, mapUrl, image, dressCode }) => (
       <div className="overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white/60 dark:bg-neutral-950/60 shadow-[0_6px_30px_rgba(0,0,0,.05)]">
         {/* Image */}
         <div className="aspect-[16/9] w-full overflow-hidden">
@@ -111,6 +111,13 @@
             <span className="inline-flex items-center gap-1"><span>📅</span>{time || "TBA"}</span>
             <span className="inline-flex items-center gap-1"><span>📍</span>{venue}</span>
           </div>
+          {dressCode && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 px-3 py-1 text-sm">
+              <span>👗</span>
+              <span className="opacity-80">Dress code:</span>
+              <span className="font-medium">{dressCode}</span>
+            </div>
+          )}
           <p className="mt-3 text-sm opacity-80 leading-relaxed">{address}</p>
 
           {/* hide this if event is Mehendi */}
@@ -325,7 +332,8 @@
             venue: "Hotel Anjani Palace",
             address: "",
             mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
-            image: "images/events/haldi.jpeg"
+            image: "images/events/haldi.jpeg",
+            dressCode: "Yellow • Traditional"
           },
           {
             name: "Sangeet & Engagement",
@@ -334,7 +342,8 @@
             venue: "Hotel Anjani Palace",
             address: "",
             mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
-            image: "images/events/ring.jpeg"
+            image: "images/events/ring.jpeg",
+            dressCode: "Festive Indian / Smart"
           },
           {
             name: "Wedding Ceremony (Pheras)",
@@ -343,7 +352,8 @@
             venue: "Hotel Anjani Palace",
             address: "",
             mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
-            image: "images/events/marriage.jpeg"
+            image: "images/events/marriage.jpeg",
+            dressCode: "Traditional Indian / Ethnic"
           },
           {
             name: "Reception",
@@ -352,7 +362,8 @@
             venue: "Hotel Anjani Palace",
             address: "",
             mapUrl: "https://maps.app.goo.gl/EsJt5TVpaukCGTJz5",
-            image: "images/events/reception.jpeg"
+            image: "images/events/reception.jpeg",
+            dressCode: "Cocktail / Indian Formal"
           }
         ],
 
